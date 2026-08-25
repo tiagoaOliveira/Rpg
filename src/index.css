@@ -1,0 +1,84 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --color-bg: #0f0e17;
+  --color-panel: #1b1a2e;
+  --color-panel-deep: #131226;
+  --color-border: #33314f;
+  --color-gold: #c9a227;
+  --color-gold-dim: #8a6f1f;
+  --color-blood: #8b1e3f;
+  --color-parchment: #e8e3d3;
+  --color-parchment-dim: #9b96a8;
+
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: rgb(82, 56, 56);
+  background-image: radial-gradient(circle at 20% 0%, rgba(201, 162, 39, 0.06), transparent 40%),
+    radial-gradient(circle at 80% 100%, rgba(139, 30, 63, 0.08), transparent 45%);
+  color: var(--color-parchment);
+  font-family: var(--font-body);
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+/* --- Botões compartilhados --- */
+
+.btn {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.15s ease, border-color 0.15s ease;
+}
+
+.btn--primary {
+  background: var(--color-gold);
+  color: #1a1608;
+}
+
+.btn--primary:hover {
+  opacity: 0.9;
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--color-border);
+  color: var(--color-parchment-dim);
+}
+
+.btn--ghost:hover {
+  border-color: var(--color-gold);
+  color: var(--color-gold);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
