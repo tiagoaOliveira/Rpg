@@ -1,28 +1,23 @@
-// Receitas aprendidas por personagem (localStorage por enquanto).
-const LEARNED_KEY_PREFIX = 'rpg_learned_recipes_';
+import { supabase } from '../lib/supabaseClient';
 
-function keyFor(characterId) {
-  return `${LEARNED_KEY_PREFIX}${characterId}`;
+export async function getLearnedRecipes(characterId) {
+  const { data, error } = await supabase
+    .from('character_recipes')
+    .select('recipe_id')
+    .eq('character_id', characterId);
+  if (error) throw error;
+  return data.map((row) => row.recipe_id);
 }
 
-export function getLearnedRecipes(characterId) {
-  try {
-    const raw = localStorage.getItem(keyFor(characterId));
-    return raw ? JSON.parse(raw) : [];
-  } catch {
-    return [];
-  }
+export async function learnRecipe(characterId, recipeId) {
+  const { error } = await supabase
+    .from('character_recipes')
+    .upsert({ character_id: characterId, recipe_id: recipeId }, { onConflict: 'character_id,recipe_id' });
+  if (error) throw error;
+  return getLearnedRecipes(characterId);
 }
 
-export function learnRecipe(characterId, recipeId) {
-  const learned = getLearnedRecipes(characterId);
-  if (!learned.includes(recipeId)) {
-    learned.push(recipeId);
-    localStorage.setItem(keyFor(characterId), JSON.stringify(learned));
-  }
-  return learned;
-}
-
-export function hasLearnedRecipe(characterId, recipeId) {
-  return getLearnedRecipes(characterId).includes(recipeId);
+export async function hasLearnedRecipe(characterId, recipeId) {
+  const learned = await getLearnedRecipes(characterId);
+  return learned.includes(recipeId);
 }

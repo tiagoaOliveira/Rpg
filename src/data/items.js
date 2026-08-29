@@ -1,26 +1,41 @@
-// Definição dos itens existentes no jogo.
-// category: 'material' | 'equipment' | 'recipe' — usado pras abas do inventário.
-// slot: só existe em itens de equipamento, deve bater com um id em equipmentSlots.js.
-export const ITEMS = {
-  ferro: { id: 'ferro', name: 'Ferro', color: '#9b9b9b', category: 'material' },
-  couro: { id: 'couro', name: 'Couro', color: '#8a5a34', category: 'material' },
-  espada_ferro: {
-    id: 'espada_ferro',
-    name: 'Espada de Ferro',
-    color: '#c9a227',
-    category: 'equipment',
-    slot: 'mainhand',
-  },
-  receita_espada_ferro: {
-    id: 'receita_espada_ferro',
-    name: 'Receita Misteriosa',
-    color: '#7a5ac9',
-    category: 'recipe',
-    isRecipe: true,
-    recipeId: 'espada_ferro',
-  },
-};
+// Catálogo de itens. Antes era estático, agora vem da tabela public.items
+// no Supabase (conteúdo do jogo, mas centralizado no banco).
+// loadItemsCatalog() é chamado uma vez no início do app (AuthContext);
+// getItemById() depois disso é síncrono, lendo do cache em memória.
+import { supabase } from '../lib/supabaseClient';
+
+let cache = null;
+let loadingPromise = null;
+
+export async function loadItemsCatalog() {
+  if (cache) return cache;
+  if (loadingPromise) return loadingPromise;
+
+  loadingPromise = supabase
+    .from('items')
+    .select('*')
+    .then(({ data, error }) => {
+      if (error) throw error;
+      cache = Object.fromEntries(
+        data.map((row) => [
+          row.id,
+          {
+            id: row.id,
+            name: row.name,
+            color: row.color,
+            category: row.category,
+            slot: row.slot,
+            isRecipe: row.category === 'recipe',
+            recipeId: row.recipe_id,
+          },
+        ]),
+      );
+      return cache;
+    });
+
+  return loadingPromise;
+}
 
 export function getItemById(id) {
-  return ITEMS[id];
+  return cache?.[id];
 }

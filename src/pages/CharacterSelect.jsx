@@ -1,35 +1,38 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CLASSES } from '../data/classes';
 import {
   getCharacters,
   createCharacter,
   deleteCharacter,
   setActiveCharacter,
   MAX_CHARACTER_SLOTS,
-} from '../utils/storage';
+} from '../utils/characters';
+import { useAuth } from '../context/AuthContext';
 import './CharacterSelect.css';
 
 export default function CharacterSelect() {
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [characters, setCharacters] = useState([]);
+  const [loadingCharacters, setLoadingCharacters] = useState(true);
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
-  const [selectedClassId, setSelectedClassId] = useState(CLASSES[0].id);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    setCharacters(getCharacters());
-  }, []);
+    if (!user) return;
+    getCharacters(user.id)
+      .then(setCharacters)
+      .finally(() => setLoadingCharacters(false));
+  }, [user]);
 
   function openCreateForm() {
     setName('');
-    setSelectedClassId(CLASSES[0].id);
     setError('');
     setCreating(true);
   }
 
-  function handleCreate(e) {
+  async function handleCreate(e) {
     e.preventDefault();
     const trimmedName = name.trim();
 
@@ -38,15 +41,9 @@ export default function CharacterSelect() {
       return;
     }
 
-    const chosenClass = CLASSES.find((c) => c.id === selectedClassId);
-
     try {
-      const newCharacter = createCharacter({
-        name: trimmedName,
-        classId: chosenClass.id,
-        baseStats: chosenClass.baseStats,
-      });
-      setCharacters(getCharacters());
+      const newCharacter = await createCharacter({ userId: user.id, name: trimmedName });
+      setCharacters((prev) => [...prev, newCharacter]);
       setCreating(false);
       enterGame(newCharacter.id);
     } catch (err) {
@@ -54,17 +51,21 @@ export default function CharacterSelect() {
     }
   }
 
-  function handleDelete(id, e) {
+  async function handleDelete(id, e) {
     e.stopPropagation();
     const confirmed = window.confirm('Excluir este personagem permanentemente?');
     if (!confirmed) return;
-    deleteCharacter(id);
-    setCharacters(getCharacters());
+    await deleteCharacter(id);
+    setCharacters((prev) => prev.filter((c) => c.id !== id));
   }
 
   function enterGame(id) {
     setActiveCharacter(id);
     navigate('/game');
+  }
+
+  if (authLoading || loadingCharacters) {
+    return <div className="char-select__loading">Carregando...</div>;
   }
 
   const emptySlots = MAX_CHARACTER_SLOTS - characters.length;
@@ -74,54 +75,32 @@ export default function CharacterSelect() {
       <div className="char-select__header">
         <span className="char-select__eyebrow">Antes de partir</span>
         <h1 className="char-select__title">Escolha seu personagem</h1>
-        <p className="char-select__subtitle">
-          O progresso fica salvo neste dispositivo até você criar uma conta.
-        </p>
+        <p className="char-select__subtitle">Seu progresso fica salvo automaticamente.</p>
       </div>
 
       <div className="char-select__grid">
-        {characters.map((character) => {
-          const characterClass = CLASSES.find((c) => c.id === character.classId);
-          return (
-            <div
-  key={character.id}
-  className="char-card"
-  style={{ '--class-color': characterClass?.color }}
-  onClick={() => enterGame(character.id)}
-  role="button"
-  tabIndex={0}
-  onKeyDown={(e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      enterGame(character.id);
-    }
-  }}
->
-  <button
-    type="button"
-    className="char-card__delete"
-    onClick={(e) => handleDelete(character.id, e)}
-    aria-label={`Excluir ${character.name}`}
-    title="Excluir personagem"
-  >
-    ×
-  </button>
-
-  <div className="char-card__portrait">
-    <span>{character.name.charAt(0).toUpperCase()}</span>
-  </div>
-
-  <h2 className="char-card__name">{character.name}</h2>
-  <span className="char-card__class">{characterClass?.name}</span>
-  <span className="char-card__level">Nível {character.level}</span>
-
-  <div className="char-card__stats">
-    <span>HP {character.stats.hp}</span>
-    <span>ATK {character.stats.attack}</span>
-    <span>DEF {character.stats.defense}</span>
-  </div>
-</div>
-          );
-        })}
+        {characters.map((character) => (
+          <button key={character.id} className="char-card" onClick={() => enterGame(character.id)}>
+            <button
+              className="char-card__delete"
+              onClick={(e) => handleDelete(character.id, e)}
+              aria-label={`Excluir ${character.name}`}
+              title="Excluir personagem"
+            >
+              ×
+            </button>
+            <div className="char-card__portrait">
+              <span>{character.name.charAt(0).toUpperCase()}</span>
+            </div>
+            <h2 className="char-card__name">{character.name}</h2>
+            <span className="char-card__level">Nível {character.level}</span>
+            <div className="char-card__stats">
+              <span>HP {character.stats.hp}</span>
+              <span>ATK {character.stats.attack}</span>
+              <span>DEF {character.stats.defense}</span>
+            </div>
+          </button>
+        ))}
 
         {Array.from({ length: emptySlots }).map((_, i) => (
           <button key={`empty-${i}`} className="char-card char-card--empty" onClick={openCreateForm}>
@@ -149,29 +128,6 @@ export default function CharacterSelect() {
               placeholder="Ex: Kael"
               autoFocus
             />
-
-            <span className="char-modal__label">Classe</span>
-            <div className="char-modal__classes">
-              {CLASSES.map((c) => (
-                <button
-                  type="button"
-                  key={c.id}
-                  className={`class-option ${selectedClassId === c.id ? 'class-option--active' : ''}`}
-                  style={{ '--class-color': c.color }}
-                  onClick={() => setSelectedClassId(c.id)}
-                >
-                  <span className="class-option__name">{c.name}</span>
-                  <span className="class-option__tagline">{c.tagline}</span>
-                  <div className="class-option__stats">
-                    <span>HP {c.baseStats.hp}</span>
-                    <span>ATK {c.baseStats.attack}</span>
-                    <span>DEF {c.baseStats.defense}</span>
-                    <span>CRIT {c.baseStats.crit}%</span>
-                    <span>VEL {c.baseStats.speed}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
 
             {error && <p className="char-modal__error">{error}</p>}
 

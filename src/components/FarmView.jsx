@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight, ScrollText, Lock } from 'lucide-react';
 import { FARM_ZONES } from '../data/farmZones';
-import { addItem } from '../utils/inventory';
+import { addManyItems } from '../utils/inventory';
 import Modal from './Modal';
 import './FarmView.css';
 
@@ -40,12 +40,14 @@ export default function FarmView({ characterId }) {
 
     // Teste: cada clique dropa 5 itens instantaneamente, sorteados por peso (rate) da zona.
     const gained = {};
+    const itemIds = [];
     for (let i = 0; i < 5; i++) {
       const drop = pickWeightedDrop(zone.drops);
       gained[drop.itemId] = (gained[drop.itemId] || 0) + 1;
-      addItem(characterId, drop.itemId, 1);
+      itemIds.push(drop.itemId);
     }
 
+    // Otimista: a run atualiza na hora; a gravação no banco roda em paralelo, numa única chamada.
     setActiveFarm((prev) => {
       const base = prev && prev.zoneId === zone.id ? prev.drops : {};
       const merged = { ...base };
@@ -54,6 +56,8 @@ export default function FarmView({ characterId }) {
       });
       return { zoneId: zone.id, drops: merged };
     });
+
+    addManyItems(characterId, itemIds).catch((err) => console.error('Erro ao salvar drops:', err));
   }
 
   function handleStop() {

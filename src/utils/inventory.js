@@ -1,37 +1,38 @@
-// Inventário por personagem.
-// Mesmo padrão do storage.js: hoje é localStorage, amanhã troca para Supabase
-// sem mudar quem chama essas funções.
+import { supabase } from '../lib/supabaseClient';
 
-const INVENTORY_KEY_PREFIX = 'rpg_inventory_';
-
-function keyFor(characterId) {
-  return `${INVENTORY_KEY_PREFIX}${characterId}`;
+export async function getInventory(characterId) {
+  const { data, error } = await supabase
+    .from('character_inventory')
+    .select('item_id, quantity')
+    .eq('character_id', characterId);
+  if (error) throw error;
+  return Object.fromEntries(data.map((row) => [row.item_id, row.quantity]));
 }
 
-export function getInventory(characterId) {
-  try {
-    const raw = localStorage.getItem(keyFor(characterId));
-    return raw ? JSON.parse(raw) : {};
-  } catch {
-    return {};
-  }
+export async function addItem(characterId, itemId, quantity = 1) {
+  const { error } = await supabase.rpc('increment_inventory', {
+    p_character_id: characterId,
+    p_item_id: itemId,
+    p_delta: quantity,
+  });
+  if (error) throw error;
 }
 
-export function addItem(characterId, itemId, quantity = 1) {
-  const inventory = getInventory(characterId);
-  inventory[itemId] = (inventory[itemId] || 0) + quantity;
-  localStorage.setItem(keyFor(characterId), JSON.stringify(inventory));
-  return inventory;
+export async function removeItem(characterId, itemId, quantity = 1) {
+  const { error } = await supabase.rpc('increment_inventory', {
+    p_character_id: characterId,
+    p_item_id: itemId,
+    p_delta: -quantity,
+  });
+  if (error) throw error;
 }
 
-export function removeItem(characterId, itemId, quantity = 1) {
-  const inventory = getInventory(characterId);
-  const newQty = (inventory[itemId] || 0) - quantity;
-  if (newQty > 0) {
-    inventory[itemId] = newQty;
-  } else {
-    delete inventory[itemId];
-  }
-  localStorage.setItem(keyFor(characterId), JSON.stringify(inventory));
-  return inventory;
+// Aplica vários drops de uma vez (ex: os 5 itens de um clique em "Farmar")
+// numa única requisição, em vez de uma por item.
+export async function addManyItems(characterId, itemIds) {
+  const { error } = await supabase.rpc('apply_farm_drops', {
+    p_character_id: characterId,
+    p_item_ids: itemIds,
+  });
+  if (error) throw error;
 }

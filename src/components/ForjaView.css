@@ -3,7 +3,132 @@
   max-width: 420px;
   display: flex;
   flex-direction: column;
+  gap: 28px;
+}
+
+.forja-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.forja-section__title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--color-gold);
+  margin: 0;
+  letter-spacing: 0.03em;
+}
+
+.forja-empty-text {
+  font-size: 12.5px;
+  color: var(--color-parchment-dim);
+  margin: 0;
+}
+
+.profession-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.profession-tile {
+  background: var(--color-panel);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.profession-tile:hover {
+  border-color: var(--color-gold);
+}
+
+.profession-tile__name {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--color-parchment);
+}
+
+.profession-tile__level {
+  font-size: 11px;
+  color: var(--color-gold);
+}
+
+.profession-tile__xp-bar {
+  height: 5px;
+  background: var(--color-panel-deep);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+}
+
+.profession-tile__xp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-gold-dim), var(--color-gold));
+}
+
+.profession-learn-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.profession-learn-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--color-panel-deep);
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.profession-learn-card__name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  color: var(--color-parchment);
+}
+
+.profession-learn-card__desc {
+  display: block;
+  font-size: 11.5px;
+  color: var(--color-parchment-dim);
+}
+
+/* --- Modal da profissão --- */
+
+.profession-modal {
+  display: flex;
+  flex-direction: column;
   gap: 14px;
+}
+
+.profession-modal__xp {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  background: var(--color-panel-deep);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.profession-modal__xp-label {
+  font-family: var(--font-display);
+  font-size: 14px;
+  color: var(--color-gold);
+}
+
+.profession-modal__xp-value {
+  font-size: 12px;
+  color: var(--color-parchment-dim);
 }
 
 .forja-card {
@@ -57,6 +182,12 @@
 
 .forja-card__material--missing {
   color: var(--color-blood);
+}
+
+.forja-card__lock {
+  font-size: 11.5px;
+  color: var(--color-blood);
+  margin: 0;
 }
 
 .forja-card__action {

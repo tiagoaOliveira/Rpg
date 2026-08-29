@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EQUIPMENT_SLOTS } from '../data/equipmentSlots';
 import { getItemById } from '../data/items';
 import { getInventory } from '../utils/inventory';
@@ -6,24 +6,64 @@ import { getEquipped, equip, unequip } from '../utils/equipment';
 import Modal from './Modal';
 import './CharacterPanel.css';
 
-export default function CharacterPanel({ character, characterClass }) {
+export default function CharacterPanel({ character }) {
   const characterId = character.id;
   const xpToNextLevel = character.level * 100;
 
-  const [equipped, setEquipped] = useState(() => getEquipped(characterId));
-  const [inventory, setInventory] = useState(() => getInventory(characterId));
+  const [equipped, setEquipped] = useState({});
+  const [inventory, setInventory] = useState({});
   const [openSlotId, setOpenSlotId] = useState(null);
 
-  function handleEquip(slotId, itemId) {
-    const result = equip(characterId, slotId, itemId);
-    setEquipped(result.equipped);
-    setInventory(result.inventory);
+  useEffect(() => {
+    getEquipped(characterId).then(setEquipped);
+    getInventory(characterId).then(setInventory);
+  }, [characterId]);
+
+  async function handleEquip(slotId, itemId) {
+    const previousEquipped = equipped;
+    const previousInventory = inventory;
+    const previousItemId = equipped[slotId];
+
+    // Otimista: atualiza a tela na hora, sem esperar o banco.
+    setEquipped((prev) => ({ ...prev, [slotId]: itemId }));
+    setInventory((prev) => {
+      const next = { ...prev };
+      next[itemId] = (next[itemId] || 0) - 1;
+      if (next[itemId] <= 0) delete next[itemId];
+      if (previousItemId) next[previousItemId] = (next[previousItemId] || 0) + 1;
+      return next;
+    });
+    setOpenSlotId(null);
+
+    try {
+      await equip(characterId, slotId, itemId);
+    } catch (err) {
+      console.error('Erro ao equipar:', err);
+      setEquipped(previousEquipped);
+      setInventory(previousInventory);
+    }
   }
 
-  function handleUnequip(slotId) {
-    const result = unequip(characterId, slotId);
-    setEquipped(result.equipped);
-    setInventory(result.inventory);
+  async function handleUnequip(slotId) {
+    const previousEquipped = equipped;
+    const previousInventory = inventory;
+    const itemId = equipped[slotId];
+
+    setEquipped((prev) => {
+      const next = { ...prev };
+      delete next[slotId];
+      return next;
+    });
+    setInventory((prev) => ({ ...prev, [itemId]: (prev[itemId] || 0) + 1 }));
+    setOpenSlotId(null);
+
+    try {
+      await unequip(characterId, slotId);
+    } catch (err) {
+      console.error('Erro ao desequipar:', err);
+      setEquipped(previousEquipped);
+      setInventory(previousInventory);
+    }
   }
 
   const allSlots = [...EQUIPMENT_SLOTS.left, ...EQUIPMENT_SLOTS.right, ...EQUIPMENT_SLOTS.bottom];
@@ -44,13 +84,10 @@ export default function CharacterPanel({ character, characterClass }) {
         </div>
 
         <div className="equip-center">
-          <div className="equip-portrait" style={{ '--class-color': characterClass?.color }}>
+          <div className="equip-portrait">
             <span>{character.name.charAt(0).toUpperCase()}</span>
           </div>
           <h3 className="equip-center__name">{character.name}</h3>
-          <span className="equip-center__class" style={{ color: characterClass?.color }}>
-            {characterClass?.name}
-          </span>
         </div>
 
         <div className="equip-column">

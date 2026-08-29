@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getActiveCharacter, clearActiveCharacter } from '../utils/storage';
-import { getClassById } from '../data/classes';
+import { getActiveCharacterId, clearActiveCharacter, getCharacterById } from '../utils/characters';
+import { useAuth } from '../context/AuthContext';
 import BottomNav from '../components/BottomNav';
 import HamburgerMenu from '../components/HamburgerMenu';
 import CharacterPanel from '../components/CharacterPanel';
@@ -21,26 +21,37 @@ const SECTION_TITLES = {
 
 export default function MainPage() {
   const navigate = useNavigate();
+  const { loading: authLoading } = useAuth();
   const [character, setCharacter] = useState(null);
+  const [loadingCharacter, setLoadingCharacter] = useState(true);
   const [activeSection, setActiveSection] = useState('farm');
 
   useEffect(() => {
-    const active = getActiveCharacter();
-    if (!active) {
+    if (authLoading) return;
+
+    const activeId = getActiveCharacterId();
+    if (!activeId) {
       navigate('/');
       return;
     }
-    setCharacter(active);
-  }, [navigate]);
+
+    getCharacterById(activeId)
+      .then((data) => {
+        if (!data) {
+          navigate('/');
+          return;
+        }
+        setCharacter(data);
+      })
+      .finally(() => setLoadingCharacter(false));
+  }, [authLoading, navigate]);
 
   function handleSwitchCharacter() {
     clearActiveCharacter();
     navigate('/');
   }
 
-  if (!character) return null;
-
-  const characterClass = getClassById(character.classId);
+  if (authLoading || loadingCharacter || !character) return null;
 
   return (
     <div className="main-page">
@@ -51,7 +62,7 @@ export default function MainPage() {
 
       <main className="main-page__stage">
         {activeSection === 'personagem' ? (
-          <CharacterPanel character={character} characterClass={characterClass} />
+          <CharacterPanel character={character} />
         ) : activeSection === 'farm' ? (
           <FarmView characterId={character.id} />
         ) : activeSection === 'forja' ? (

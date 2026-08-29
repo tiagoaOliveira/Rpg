@@ -4,14 +4,14 @@ import { useAuth } from '../context/AuthContext';
 import './LoginPage.css';
 
 export default function LoginPage() {
-  const { user, loading, signInWithGoogle } = useAuth();
+  const { user, isAnonymous, loading, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && user) {
+    if (!loading && user && !isAnonymous) {
       navigate('/game');
     }
-  }, [loading, user, navigate]);
+  }, [loading, user, isAnonymous, navigate]);
 
   return (
     <div className="login-page">

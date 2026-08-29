@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getInventory } from '../utils/inventory';
 import { getItemById } from '../data/items';
 import { learnRecipe, hasLearnedRecipe } from '../utils/recipes';
@@ -16,29 +16,39 @@ const TABS = [
 const ALL_SLOTS = [...EQUIPMENT_SLOTS.left, ...EQUIPMENT_SLOTS.right, ...EQUIPMENT_SLOTS.bottom];
 
 export default function InventoryView({ characterId }) {
-  const [inventory, setInventory] = useState(() => getInventory(characterId));
+  const [inventory, setInventory] = useState({});
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('materiais');
   const [openItemId, setOpenItemId] = useState(null);
+
+  useEffect(() => {
+    getInventory(characterId).then((inv) => {
+      setInventory(inv);
+      setLoading(false);
+    });
+  }, [characterId]);
 
   const allOwned = Object.entries(inventory).filter(([, qty]) => qty > 0);
   const openItem = openItemId ? getItemById(openItemId) : null;
 
-  function refreshInventory() {
-    setInventory(getInventory(characterId));
+  async function refreshInventory() {
+    setInventory(await getInventory(characterId));
   }
 
-  function handleLearn() {
+  async function handleLearn() {
     if (!openItem?.recipeId) return;
-    learnRecipe(characterId, openItem.recipeId);
-    refreshInventory();
+    await learnRecipe(characterId, openItem.recipeId);
+    await refreshInventory();
   }
 
-  function handleEquip() {
+  async function handleEquip() {
     if (!openItem?.slot) return;
-    equip(characterId, openItem.slot, openItem.id);
-    refreshInventory();
+    await equip(characterId, openItem.slot, openItem.id);
+    await refreshInventory();
     setOpenItemId(null);
   }
+
+  if (loading) return null;
 
   if (allOwned.length === 0) {
     return (
@@ -124,7 +134,20 @@ export default function InventoryView({ characterId }) {
 
 function RecipeModalContent({ item, characterId, onLearn, onClose }) {
   const [justLearned, setJustLearned] = useState(false);
-  const alreadyLearned = hasLearnedRecipe(characterId, item.recipeId);
+  const [alreadyLearned, setAlreadyLearned] = useState(false);
+  const [checking, setChecking] = useState(true);
+
+  useEffect(() => {
+    hasLearnedRecipe(characterId, item.recipeId).then((result) => {
+      setAlreadyLearned(result);
+      setChecking(false);
+    });
+  }, [characterId, item.recipeId]);
+
+  async function handleLearnClick() {
+    await onLearn();
+    setJustLearned(true);
+  }
 
   if (justLearned) {
     return (
@@ -137,6 +160,8 @@ function RecipeModalContent({ item, characterId, onLearn, onClose }) {
     );
   }
 
+  if (checking) return null;
+
   return (
     <div className="recipe-modal">
       <p className="recipe-modal__mystery">
@@ -145,13 +170,7 @@ function RecipeModalContent({ item, characterId, onLearn, onClose }) {
       {alreadyLearned ? (
         <p className="recipe-modal__note">Você já conhece essa receita.</p>
       ) : (
-        <button
-          className="btn btn--primary"
-          onClick={() => {
-            onLearn();
-            setJustLearned(true);
-          }}
-        >
+        <button className="btn btn--primary" onClick={handleLearnClick}>
           Aprender
         </button>
       )}

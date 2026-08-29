@@ -8,7 +8,7 @@ export default function HamburgerMenu({ onSwitchCharacter }) {
   const [open, setOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
-  const { user, signOut } = useAuth();
+  const { user, isAnonymous, signOut } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(e) {
@@ -43,7 +43,7 @@ export default function HamburgerMenu({ onSwitchCharacter }) {
 
       {open && (
         <div className="hamburger__panel">
-          {user ? (
+          {!isAnonymous && user ? (
             <>
               <div className="hamburger__user">{user.email}</div>
               <button className="hamburger__item" onClick={handleLogout}>
