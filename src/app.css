@@ -1,0 +1,42 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #d8dae0;
+  color: #1a1a1a;
+}
+
+/* "moldura" de app mobile: no celular ocupa 100% da tela,
+   em telas maiores fica centralizado com largura de celular */
+.app-shell {
+  position: relative;
+  max-width: 480px;
+  height: 100dvh;
+  margin: 0 auto;
+  overflow: hidden;
+  background: #f5f6f8;
+}
+
+@media (min-width: 481px) {
+  .app-shell {
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.loading-screen {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+  color: #555;
+}

@@ -1,0 +1,49 @@
+.hub {
+  position: absolute;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  background: rgba(26, 26, 26, 0.9);
+  backdrop-filter: blur(6px);
+  padding: 8px;
+  border-radius: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  z-index: 30;
+  max-width: calc(100% - 32px);
+}
+
+.hub-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: #cfcfcf;
+  padding: 8px 16px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.hub-button:hover,
+.hub-button:active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.hub-button.is-active {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.hub-icon {
+  display: flex;
+}
+
+.hub-label {
+  font-size: 0.65rem;
+  font-weight: 500;
+}

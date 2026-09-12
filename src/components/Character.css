@@ -1,0 +1,70 @@
+.character-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.character-card {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+  background: linear-gradient(180deg, #2b2f38, #1a1c22);
+  border-radius: 16px;
+  border: 2px solid #3a3f4b;
+}
+
+.character-image-placeholder {
+  position: absolute;
+  inset: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.equipment-slot {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+}
+
+.slot-top-left { top: -8px; left: -8px; }
+.slot-top-right { top: -8px; right: -8px; }
+.slot-bottom-left { bottom: -8px; left: -8px; }
+.slot-bottom-right { bottom: -8px; right: -8px; }
+
+.character-tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.character-tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  background: #eee;
+  color: #666;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.character-tab.is-active {
+  background: #1a1a1a;
+  color: #fff;
+}
+
+.character-tab-content {
+  min-height: 100px;
+}
+
+.equipment-slot.has-item {
+  background: rgba(255, 215, 94, 0.25);
+  border-color: #ffd75e;
+  cursor: pointer;
+  padding: 0;
+}
