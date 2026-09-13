@@ -1,5 +1,4 @@
 import { useState } from 'react'
-import { Swords } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import Header from '../components/Header'
 import Hub from '../components/Hub'
@@ -34,8 +33,10 @@ export default function Main() {
     setActiveSheet(null)
   }
 
-  function handleSelectHero(hero) {
-    setSelectedHero(hero)
+  function handleAddCharacter(map) {
+    // "map" identifica em qual mapa o botão foi clicado — ainda sem uso,
+    // fica disponível pra quando ligarmos a escolha do herói a esse mapa
+    setSelectedHero(null)
     setActiveSheet('character')
   }
 
@@ -50,27 +51,17 @@ export default function Main() {
         onLogout={handleLogout}
       />
 
-      <section className="heroes-section">
-        <h2>Seus heróis</h2>
-        <div className="heroes-grid">
-          {HEROES.map((hero) => (
-            <button
-              key={hero.id}
-              className="hero-card"
-              onClick={() => handleSelectHero(hero)}
-            >
-              <Swords size={28} />
-              <span>{hero.name}</span>
-            </button>
-          ))}
-        </div>
-      </section>
+      <Map onAddCharacter={handleAddCharacter} />
 
       <Hub active={activeSheet} onOpen={handleOpen} />
 
       <Inventory isOpen={activeSheet === 'inventory'} onClose={closeSheet} />
-      <Character isOpen={activeSheet === 'character'} onClose={closeSheet} hero={selectedHero} />
-      <Map isOpen={activeSheet === 'map'} onClose={closeSheet} />
+      <Character
+        isOpen={activeSheet === 'character'}
+        onClose={closeSheet}
+        heroes={HEROES}
+        initialHeroId={selectedHero?.id}
+      />
     </div>
   )
 }

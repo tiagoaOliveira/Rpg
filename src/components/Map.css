@@ -1,3 +1,48 @@
-.map-panel {
-  min-height: 120px;
+.map-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.map-row {
+  position: relative;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.map-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+}
+
+.map-add-character {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 40px;
+  height: 40px;
+
+  border-radius: 50%;
+  border: 2px dashed #bbb;
+  background: rgba(255, 255, 255, 0.9);
+  color: #888;
+  cursor: pointer;
+}
+
+.map-add-character:hover {
+  border-color: #1a1a1a;
+  color: #1a1a1a;
 }

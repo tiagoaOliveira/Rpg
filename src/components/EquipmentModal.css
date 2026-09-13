@@ -1,0 +1,99 @@
+.equipment-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.equipment-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.equipment-display-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.item-icon-large {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.equipment-display-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.equipment-display-tag {
+  font-size: 0.6rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.equipment-swap-button {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 999px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.equipment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 160px;
+}
+
+.equipment-list-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-align: left;
+}
+
+.equipment-list-item.is-equipped {
+  border-color: #ffd75e;
+  background: rgba(255, 215, 94, 0.1);
+}
+
+.equipment-list-item.is-selected {
+  border-color: #1a1a1a;
+}
+
+.item-icon-small {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.equipped-badge {
+  margin-left: auto;
+  font-size: 0.65rem;
+  color: #a67c00;
+  font-weight: 600;
+}

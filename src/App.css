@@ -1,5 +1,6 @@
 * {
   box-sizing: border-box;
+  scrollbar-width: none;
 }
 
 html,
@@ -8,6 +9,9 @@ body,
   height: 100%;
 }
 
+html::-webkit-scrollbar {
+  display: none;
+}
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -19,7 +23,7 @@ body {
    em telas maiores fica centralizado com largura de celular */
 .app-shell {
   position: relative;
-  max-width: 480px;
+  max-width: 680px;
   height: 100dvh;
   margin: 0 auto;
   overflow: hidden;
