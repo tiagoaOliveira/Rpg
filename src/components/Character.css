@@ -103,18 +103,3 @@
 .character-tab-content {
   min-height: 100px;
 }
-
-.character-fight-button {
-  padding: 14px;
-  border: none;
-  border-radius: 10px;
-  background: #d32f2f;
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.95rem;
-  cursor: pointer;
-}
-
-.character-fight-button:hover {
-  background: #b71c1c;
-}

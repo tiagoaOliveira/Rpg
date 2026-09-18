@@ -1,0 +1,61 @@
+.forge-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.forge-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+}
+
+.forge-item-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.forge-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.forge-item-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.forge-item-cost {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.forge-item-cost.is-insufficient {
+  color: #d32f2f;
+}
+
+.forge-item-button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.forge-item-button:disabled {
+  background: #ccc;
+  cursor: default;
+}

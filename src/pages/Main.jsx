@@ -5,6 +5,8 @@ import Hub from '../components/Hub'
 import Inventory from '../components/Inventory'
 import Character from '../components/Character'
 import Map from '../components/Map'
+import Forge from '../components/Forge'
+import Craft from '../components/Craft'
 import './Main.css'
 
 const HEROES = [
@@ -33,13 +35,6 @@ export default function Main() {
     setActiveSheet(null)
   }
 
-  function handleAddCharacter(map) {
-    // "map" identifica em qual mapa o botão foi clicado — ainda sem uso,
-    // fica disponível pra quando ligarmos a escolha do herói a esse mapa
-    setSelectedHero(null)
-    setActiveSheet('character')
-  }
-
   return (
     <div className="main-page">
       <Header
@@ -51,7 +46,7 @@ export default function Main() {
         onLogout={handleLogout}
       />
 
-      <Map onAddCharacter={handleAddCharacter} />
+      <Map />
 
       <Hub active={activeSheet} onOpen={handleOpen} />
 
@@ -62,6 +57,8 @@ export default function Main() {
         heroes={HEROES}
         initialHeroId={selectedHero?.id}
       />
+      <Forge isOpen={activeSheet === 'forge'} onClose={closeSheet} />
+      <Craft isOpen={activeSheet === 'craft'} onClose={closeSheet} />
     </div>
   )
 }

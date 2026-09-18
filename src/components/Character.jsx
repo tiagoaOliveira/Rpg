@@ -123,12 +123,6 @@ export default function Character({ isOpen, onClose, heroes = [], initialHeroId 
             <div className="ascension-content">{/* requisitos de ascensão entram aqui */}</div>
           )}
         </div>
-        <button
-          className="character-fight-button"
-          onClick={() => console.log('Lutar com', hero?.name)}
-        >
-          Lutar
-        </button>
       </div>
 
       <EquipmentModal

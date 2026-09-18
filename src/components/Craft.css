@@ -1,0 +1,61 @@
+.craft-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.craft-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border: 1px solid #eee;
+  border-radius: 10px;
+}
+
+.craft-item-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.craft-item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.craft-item-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.craft-item-cost {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+.craft-item-cost.is-insufficient {
+  color: #d32f2f;
+}
+
+.craft-item-button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  background: #1a1a1a;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.craft-item-button:disabled {
+  background: #ccc;
+  cursor: default;
+}
