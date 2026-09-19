@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Plus, ChevronDown } from 'lucide-react'
+import { Plus, Info, Play } from 'lucide-react'
 import Modal from './Modal'
 import './Map.css'
 
 import map1 from '/assets/maps/map1.jpg'
-import map2 from '/assets/maps/map2.jpg'
+import map2 from '/assets/maps/cavern.jpg'
 import map3 from '/assets/maps/map3.jpg'
 
 const MAPS = [
@@ -21,41 +21,47 @@ export default function Map() {
     setExpandedId((current) => (current === mapId ? null : mapId))
   }
 
+  function handleFarm(map) {
+    // aqui depois entra a lógica real de iniciar a run e dar as recompensas
+    console.log('Iniciar farm em', map.name)
+  }
+
   return (
     <section className="map-list">
       {MAPS.map((map) => {
         const isExpanded = expandedId === map.id
         return (
           <div key={map.id} className="map-card">
-            <div className="map-row">
-              <button
-                className="map-add-character"
-                onClick={() => setSelectedMap(map)}
-                aria-label={`Incluir personagem em ${map.name}`}
-              >
-                <Plus size={20} />
-              </button>
+            <button
+              className="map-add-character"
+              onClick={() => setSelectedMap(map)}
+              aria-label={`Incluir personagem em ${map.name}`}
+            >
+              <Plus size={20} />
+            </button>
 
-              <img className="map-image" src={map.image} alt={map.name} />
+            <button
+              className="map-info-button"
+              onClick={() => toggleRewards(map.id)}
+              aria-label={`Ver recompensas de ${map.name}`}
+            >
+              <Info size={16} />
+            </button>
+
+            <img className="map-image" src={map.image} alt={map.name} />
+
+            <div className={`map-rewards-overlay ${isExpanded ? 'is-open' : ''}`}>
+              <span className="map-reward-item">Ouro: {map.rewardGold}</span>
+              <span className="map-reward-item">XP: {map.rewardXp}</span>
             </div>
 
             <button
-              className="map-rewards-bar"
-              onClick={() => toggleRewards(map.id)}
+              className="map-farm-button"
+              onClick={() => handleFarm(map)}
             >
-              <span>Recompensas</span>
-              <ChevronDown
-                size={16}
-                className={`map-rewards-chevron ${isExpanded ? 'is-open' : ''}`}
-              />
+              <Play size={16} />
+              Farm
             </button>
-
-            <div className={`map-rewards-panel ${isExpanded ? 'is-open' : ''}`}>
-              <div className="map-rewards-content">
-                <span className="map-reward-item">Ouro: {map.rewardGold}</span>
-                <span className="map-reward-item">XP: {map.rewardXp}</span>
-              </div>
-            </div>
           </div>
         )
       })}

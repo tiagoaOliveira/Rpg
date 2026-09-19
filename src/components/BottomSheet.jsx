@@ -1,7 +1,7 @@
 import { X } from 'lucide-react'
 import './BottomSheet.css'
 
-export default function BottomSheet({ isOpen, onClose, title, children }) {
+export default function BottomSheet({ isOpen, onClose, title, headerContent, children }) {
   function handleClose() {
     if (document.activeElement instanceof HTMLElement) {
       document.activeElement.blur()
@@ -23,7 +23,7 @@ export default function BottomSheet({ isOpen, onClose, title, children }) {
       >
         <div className="bottom-sheet-handle" />
         <div className="bottom-sheet-header">
-          <h2>{title}</h2>
+          {headerContent ?? <h2>{title}</h2>}
           <button className="bottom-sheet-close" onClick={handleClose} aria-label="Fechar">
             <X size={18} />
           </button>

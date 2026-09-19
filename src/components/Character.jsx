@@ -4,7 +4,6 @@ import BottomSheet from './BottomSheet'
 import EquipmentModal from './EquipmentModal'
 import './Character.css'
 
-// dados de teste: equipamento por herói, por slot
 const EQUIPMENT_BY_HERO = {
   'hero-1': {
     topLeft: {
@@ -38,7 +37,6 @@ export default function Character({ isOpen, onClose, heroes = [], initialHeroId 
   const [activeTab, setActiveTab] = useState('status')
   const [openSlot, setOpenSlot] = useState(null)
 
-  // toda vez que o sheet abre, começa mostrando o herói que foi clicado
   useEffect(() => {
     if (!isOpen) return
     const index = heroes.findIndex((h) => h.id === initialHeroId)
@@ -59,14 +57,31 @@ export default function Character({ isOpen, onClose, heroes = [], initialHeroId 
   }
 
   function handleSlotClick(slotKey) {
-    if (!heroEquipment[slotKey]) return // slot ainda sem equipamento de teste
+    if (!heroEquipment[slotKey]) return
     setOpenSlot(slotKey)
   }
 
   const openSlotData = openSlot ? heroEquipment[openSlot] : null
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title={hero?.name ?? 'Personagem'}>
+    <BottomSheet
+      isOpen={isOpen}
+      onClose={onClose}
+      headerContent={
+        <div className="character-header-selector">
+          {heroes.map((h, index) => (
+            <button
+              key={h.id}
+              className={`character-header-avatar ${index === heroIndex ? 'is-active' : ''}`}
+              onClick={() => setHeroIndex(index)}
+              aria-label={h.name}
+            >
+              {/* futuramente: <img src={h.avatarUrl} alt={h.name} /> */}
+            </button>
+          ))}
+        </div>
+      }
+    >
       <div className="character-panel">
         <div className="character-card-wrapper">
           <button
@@ -118,9 +133,9 @@ export default function Character({ isOpen, onClose, heroes = [], initialHeroId 
 
         <div className="character-tab-content">
           {activeTab === 'status' ? (
-            <div className="status-content">{/* status do personagem entra aqui */}</div>
+            <div className="status-content" />
           ) : (
-            <div className="ascension-content">{/* requisitos de ascensão entram aqui */}</div>
+            <div className="ascension-content" />
           )}
         </div>
       </div>

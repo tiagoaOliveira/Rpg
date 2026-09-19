@@ -103,3 +103,24 @@
 .character-tab-content {
   min-height: 100px;
 }
+
+
+.character-header-selector {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.character-header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.character-header-avatar.is-active {
+  border-color: #1a1a1a;
+}
