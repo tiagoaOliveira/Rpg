@@ -7,12 +7,9 @@ import Character from '../components/Character'
 import Map from '../components/Map'
 import Forge from '../components/Forge'
 import Craft from '../components/Craft'
+import { HEROES } from '../data/heroes'
 import './Main.css'
 
-const HEROES = [
-  { id: 'hero-1', name: 'Herói 1' },
-  { id: 'hero-2', name: 'Herói 2' },
-]
 
 export default function Main() {
   const { user, signOut } = useAuth()

@@ -11,53 +11,107 @@
   border-radius: 12px;
 }
 
-.map-add-character {
-  position: absolute;
-  left: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 2;
+.farm-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
 
+.farm-hero-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+}
+
+.farm-hero-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+}
+
+.farm-hero-item.is-selected {
+  border-color: #1a1a1a;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.farm-hero-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.farm-hero-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.farm-hero-check {
+  margin-left: auto;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  width: 40px;
-  height: 40px;
-
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  border: 2px dashed #bbb;
-  background: rgba(255, 255, 255, 0.9);
-  color: #888;
-  cursor: pointer;
+  background: #1a1a1a;
+  color: #fff;
+  flex-shrink: 0;
 }
 
-.map-add-character:hover {
-  border-color: #1a1a1a;
+.farm-preview {
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: rgba(46, 125, 50, 0.08);
+  border: 1px solid rgba(46, 125, 50, 0.2);
+}
+
+.farm-preview-label {
+  display: block;
+  font-size: 0.7rem;
+  color: #2e7d32;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+}
+
+.farm-preview-items {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.farm-preview-item {
+  font-size: 0.8rem;
+  font-weight: 600;
   color: #1a1a1a;
 }
 
-.map-info-button {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  z-index: 2;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+.farm-start-button {
+  padding: 12px;
   border: none;
-  background: rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  background: #1a1a1a;
   color: #fff;
+  font-weight: 700;
+  font-size: 0.9rem;
   cursor: pointer;
 }
 
-.map-info-button:hover {
-  background: rgba(0, 0, 0, 0.7);
+.farm-start-button:disabled {
+  background: #ccc;
+  cursor: default;
 }
 
 .map-image {
@@ -67,89 +121,28 @@
   display: block;
 }
 
-.map-rewards-overlay {
+.map-rewards {
   position: absolute;
-  top: 44px;
+  top: 10px;
   right: 10px;
   z-index: 2;
 
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  gap: 10px;
 
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: rgba(0, 0, 0, 0.7);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
   font-size: 0.75rem;
-
-  opacity: 0;
-  transform: translateY(-6px);
-  pointer-events: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
-}
-
-.map-rewards-overlay.is-open {
-  opacity: 1;
-  transform: translateY(0);
-  pointer-events: auto;
+  font-weight: 600;
 }
 
 .map-reward-item {
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
   white-space: nowrap;
-}
-
-/* modal de personagem aberto pelo Map */
-.map-character-modal {
-  display: flex;
-  gap: 14px;
-}
-
-.map-character-image-placeholder {
-  width: 90px;
-  height: 110px;
-  border-radius: 10px;
-  background: rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-}
-
-.map-character-stats {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  flex: 1;
-}
-
-.map-character-stat {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.85rem;
-}
-
-.stat-label {
-  color: #888;
-}
-
-.stat-value {
-  font-weight: 700;
-}
-
-.map-fight-button {
-  margin-top: auto;
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background: #d32f2f;
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.85rem;
-  cursor: pointer;
-}
-
-.map-fight-button:hover {
-  background: #b71c1c;
 }
 
 .map-farm-button {

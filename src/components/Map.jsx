@@ -1,98 +1,120 @@
 import { useState } from 'react'
-import { Plus, Info, Play } from 'lucide-react'
+import { Play, Check, Coins, Star, Mountain, Pickaxe } from 'lucide-react'
 import Modal from './Modal'
+import { MAPS } from '../data/maps'
+import { HEROES } from '../data/heroes'
+import { RESOURCES } from '../data/resources'
 import './Map.css'
 
-import map1 from '/assets/maps/map1.jpg'
-import map2 from '/assets/maps/cavern.jpg'
-import map3 from '/assets/maps/map3.jpg'
-
-const MAPS = [
-  { id: 'map-1', name: 'Mapa 1', image: map1, rewardGold: 120, rewardXp: 45 },
-  { id: 'map-2', name: 'Mapa 2', image: map2, rewardGold: 200, rewardXp: 80 },
-  { id: 'map-3', name: 'Mapa 3', image: map3, rewardGold: 350, rewardXp: 150 },
-]
+// ícone de cada recurso (a parte visual fica na UI, não nos dados)
+const RESOURCE_ICONS = {
+  gold: Coins,
+  xp: Star,
+  iron_ore: Mountain,
+  mining_xp: Pickaxe,
+}
 
 export default function Map() {
-  const [selectedMap, setSelectedMap] = useState(null)
-  const [expandedId, setExpandedId] = useState(null)
+  const [farmMap, setFarmMap] = useState(null)
+  const [selectedHeroIds, setSelectedHeroIds] = useState([])
 
-  function toggleRewards(mapId) {
-    setExpandedId((current) => (current === mapId ? null : mapId))
+  function openFarmModal(map) {
+    setSelectedHeroIds([])
+    setFarmMap(map)
   }
 
-  function handleFarm(map) {
-    // aqui depois entra a lógica real de iniciar a run e dar as recompensas
-    console.log('Iniciar farm em', map.name)
+  function toggleHero(heroId) {
+    setSelectedHeroIds((current) =>
+      current.includes(heroId)
+        ? current.filter((id) => id !== heroId)
+        : [...current, heroId]
+    )
   }
+
+  function handleStart() {
+    // aqui depois entra a lógica real de iniciar a run com selectedHeroIds
+    console.log('Iniciar farm em', farmMap?.name, 'com', selectedHeroIds)
+    setFarmMap(null)
+  }
+
+  const hasSelection = selectedHeroIds.length > 0
 
   return (
     <section className="map-list">
-      {MAPS.map((map) => {
-        const isExpanded = expandedId === map.id
-        return (
-          <div key={map.id} className="map-card">
-            <button
-              className="map-add-character"
-              onClick={() => setSelectedMap(map)}
-              aria-label={`Incluir personagem em ${map.name}`}
-            >
-              <Plus size={20} />
-            </button>
-
-            <button
-              className="map-info-button"
-              onClick={() => toggleRewards(map.id)}
-              aria-label={`Ver recompensas de ${map.name}`}
-            >
-              <Info size={16} />
-            </button>
-
-            <img className="map-image" src={map.image} alt={map.name} />
-
-            <div className={`map-rewards-overlay ${isExpanded ? 'is-open' : ''}`}>
-              <span className="map-reward-item">Ouro: {map.rewardGold}</span>
-              <span className="map-reward-item">XP: {map.rewardXp}</span>
-            </div>
-
-            <button
-              className="map-farm-button"
-              onClick={() => handleFarm(map)}
-            >
-              <Play size={16} />
-              Farm
-            </button>
+      {MAPS.map((map) => (
+        <div key={map.id} className="map-card">
+          <div className="map-rewards">
+            {map.rewards.map(({ resourceId, amountPerHour }) => {
+              const Icon = RESOURCE_ICONS[resourceId]
+              return (
+                <span
+                  key={resourceId}
+                  className="map-reward-item"
+                  title={RESOURCES[resourceId].name}
+                >
+                  <Icon size={14} />
+                  {amountPerHour}/h
+                </span>
+              )
+            })}
           </div>
-        )
-      })}
+
+          <img className="map-image" src={map.image} alt={map.name} />
+
+          <button className="map-farm-button" onClick={() => openFarmModal(map)}>
+            <Play size={16} />
+            Farm
+          </button>
+        </div>
+      ))}
 
       <Modal
-        isOpen={selectedMap !== null}
-        onClose={() => setSelectedMap(null)}
-        title={selectedMap?.name ?? 'Personagem'}
+        isOpen={farmMap !== null}
+        onClose={() => setFarmMap(null)}
+        title={farmMap?.name ?? 'Farm'}
       >
-        <div className="map-character-modal">
-          <div className="map-character-image-placeholder" />
-          <div className="map-character-stats">
-            <div className="map-character-stat">
-              <span className="stat-label">HP</span>
-              <span className="stat-value">100</span>
-            </div>
-            <div className="map-character-stat">
-              <span className="stat-label">ATK</span>
-              <span className="stat-value">20</span>
-            </div>
-            <div className="map-character-stat">
-              <span className="stat-label">DEF</span>
-              <span className="stat-value">10</span>
-            </div>
-            <button
-              className="map-fight-button"
-              onClick={() => console.log('Lutar em', selectedMap?.name)}
-            >
-              Lutar
-            </button>
+        <div className="farm-modal">
+          <div className="farm-hero-list">
+            {HEROES.map((hero) => {
+              const isSelected = selectedHeroIds.includes(hero.id)
+              return (
+                <button
+                  key={hero.id}
+                  className={`farm-hero-item ${isSelected ? 'is-selected' : ''}`}
+                  onClick={() => toggleHero(hero.id)}
+                >
+                  <div className="farm-hero-avatar" />
+                  <span className="farm-hero-name">{hero.name}</span>
+                  {isSelected && (
+                    <span className="farm-hero-check">
+                      <Check size={14} />
+                    </span>
+                  )}
+                </button>
+              )
+            })}
           </div>
+
+          {hasSelection && farmMap && (
+            <div className="farm-preview">
+              <span className="farm-preview-label">Previsão por hora</span>
+              <div className="farm-preview-items">
+                {farmMap.rewards.map(({ resourceId, amountPerHour }) => (
+                  <span key={resourceId} className="farm-preview-item">
+                    {RESOURCES[resourceId].name}: {amountPerHour}/h
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <button
+            className="farm-start-button"
+            disabled={!hasSelection}
+            onClick={handleStart}
+          >
+            Iniciar
+          </button>
         </div>
       </Modal>
     </section>

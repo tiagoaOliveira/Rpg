@@ -29,12 +29,6 @@ body {
   overflow: hidden;
 }
 
-@media (min-width: 481px) {
-  .app-shell {
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.15);
-  }
-}
-
 .loading-screen {
   height: 100%;
   display: flex;

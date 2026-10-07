@@ -4,26 +4,13 @@ import BottomSheet from './BottomSheet'
 import EquipmentModal from './EquipmentModal'
 import './Character.css'
 
-const EQUIPMENT_BY_HERO = {
-  'hero-1': {
-    topLeft: {
-      equippedId: 'eq-1',
-      items: [
-        { id: 'eq-1', name: 'Espada Inicial' },
-        { id: 'eq-2', name: 'Espada Afiada' },
-        { id: 'eq-3', name: 'Espada Lendária' },
-      ],
-    },
-  },
-  'hero-2': {
-    topLeft: {
-      equippedId: 'eq-4',
-      items: [
-        { id: 'eq-4', name: 'Machado de Guerra' },
-        { id: 'eq-5', name: 'Machado Rúnico' },
-      ],
-    },
-  },
+import { EQUIPMENT_BY_ID } from '../data/equipment'
+
+// ESTADO DO JOGADOR (mock): quais itens ele tem e qual está equipado.
+// Isso virá do backend. A definição de cada item vem de data/equipment.js.
+const TEST_HERO_EQUIPMENT = {
+  'hero-1': { topLeft: { equippedId: 'eq-1', itemIds: ['eq-1', 'eq-2', 'eq-3'] } },
+  'hero-2': { topLeft: { equippedId: 'eq-4', itemIds: ['eq-4', 'eq-5'] } },
 }
 
 const SLOTS = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight']
@@ -46,8 +33,16 @@ export default function Character({ isOpen, onClose, heroes = [], initialHeroId 
   }, [isOpen, initialHeroId, heroes])
 
   const hero = heroes[heroIndex]
-  const heroEquipment = hero ? EQUIPMENT_BY_HERO[hero.id] ?? {} : {}
-
+  const heroState = hero ? TEST_HERO_EQUIPMENT[hero.id] ?? {} : {}
+  const heroEquipment = Object.fromEntries(
+    Object.entries(heroState).map(([slot, state]) => [
+      slot,
+      {
+        equippedId: state.equippedId,
+        items: state.itemIds.map((id) => EQUIPMENT_BY_ID[id]),
+      },
+    ])
+  )
   function goToPrevious() {
     setHeroIndex((current) => (current - 1 + heroes.length) % heroes.length)
   }
