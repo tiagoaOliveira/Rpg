@@ -1,5 +1,4 @@
 .map-list {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -143,6 +142,93 @@
   align-items: center;
   gap: 4px;
   white-space: nowrap;
+}
+
+/* ganho ao vivo, logo abaixo do .map-rewards */
+.map-farm-status {
+  position: absolute;
+  top: 46px;
+  right: 10px;
+  z-index: 2;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(46, 125, 50, 0.85);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.map-farm-multiplier {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #fff;
+  color: #2e7d32;
+  font-weight: 800;
+}
+
+.map-farm-gain {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.map-farm-button.is-running {
+  background: #c62828;
+}
+
+.map-farm-button.is-running:hover {
+  background: #a82020;
+}
+
+/* herói no modal de farm */
+.farm-hero-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.farm-hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  color: #777;
+}
+
+.farm-hero-mining {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.farm-hero-item:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.farm-hero-busy {
+  margin-left: auto;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #a67c00;
+  text-transform: uppercase;
+}
+
+.farm-preview-multiplier {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 0.65rem;
 }
 
 .map-farm-button {

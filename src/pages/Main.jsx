@@ -1,20 +1,28 @@
 import { useState } from 'react'
 import { useAuth } from '../context/AuthContext'
+import { useInventory } from '../context/InventoryContext'
 import Header from '../components/Header'
 import Hub from '../components/Hub'
 import Inventory from '../components/Inventory'
 import Character from '../components/Character'
 import Map from '../components/Map'
 import Forge from '../components/Forge'
-import Craft from '../components/Craft'
-import { HEROES } from '../data/heroes'
+import Fusion from '../components/Fusion'
 import './Main.css'
 
+// cada chave do Hub aponta para o componente que vira a página
+const VIEWS = {
+  character: Character,
+  map: Map,
+  inventory: Inventory,
+  forge: Forge,
+  fusion: Fusion,
+}
 
 export default function Main() {
   const { user, signOut } = useAuth()
-  const [activeSheet, setActiveSheet] = useState(null)
-  const [selectedHero, setSelectedHero] = useState(null)
+  const { getAmount } = useInventory()
+  const [activeView, setActiveView] = useState('character')
 
   async function handleLogout() {
     try {
@@ -24,38 +32,25 @@ export default function Main() {
     }
   }
 
-  function handleOpen(key) {
-    setActiveSheet((current) => (current === key ? null : key))
-  }
-
-  function closeSheet() {
-    setActiveSheet(null)
-  }
+  const ActiveView = VIEWS[activeView]
 
   return (
     <div className="main-page">
       <Header
         avatarUrl={user?.user_metadata?.avatar_url}
         level={1}
-        combatPower={1234}
-        gold={500}
-        diamonds={20}
+        resources={[
+          { id: 'gold', amount: getAmount('gold') },
+          { id: 'iron_ore', amount: getAmount('iron_ore') },
+        ]}
         onLogout={handleLogout}
       />
 
-      <Map />
+      <main className="main-content">
+        <ActiveView />
+      </main>
 
-      <Hub active={activeSheet} onOpen={handleOpen} />
-
-      <Inventory isOpen={activeSheet === 'inventory'} onClose={closeSheet} />
-      <Character
-        isOpen={activeSheet === 'character'}
-        onClose={closeSheet}
-        heroes={HEROES}
-        initialHeroId={selectedHero?.id}
-      />
-      <Forge isOpen={activeSheet === 'forge'} onClose={closeSheet} />
-      <Craft isOpen={activeSheet === 'craft'} onClose={closeSheet} />
+      <Hub active={activeView} onOpen={setActiveView} />
     </div>
   )
 }

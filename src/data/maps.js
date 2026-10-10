@@ -9,8 +9,8 @@ const MAPS_LIST = [
     name: 'Mapa 1',
     image: map1,
     rewards: [
-      { resourceId: 'gold', amountPerHour: 120 },
-      { resourceId: 'xp', amountPerHour: 45 },
+      { resourceId: 'gold', amountPerHour: 1200 },
+      { resourceId: 'xp', amountPerHour: 450 },
     ],
   },
   {
@@ -18,8 +18,8 @@ const MAPS_LIST = [
     name: 'Mapa 2',
     image: map2,
     rewards: [
-      { resourceId: 'iron_ore', amountPerHour: 14 },
-      { resourceId: 'mining_xp', amountPerHour: 30 },
+      { resourceId: 'iron_ore', amountPerHour: 1400 },
+      { resourceId: 'mining_xp', amountPerHour: 300 },
     ],
   },
   {
@@ -27,8 +27,8 @@ const MAPS_LIST = [
     name: 'Mapa 3',
     image: map3,
     rewards: [
-      { resourceId: 'gold', amountPerHour: 200 },
-      { resourceId: 'xp', amountPerHour: 80 },
+      { resourceId: 'gold', amountPerHour: 2000 },
+      { resourceId: 'xp', amountPerHour: 800 },
     ],
   },
 ]

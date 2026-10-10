@@ -6,11 +6,6 @@
   color: #fff;
 }
 
-.game-header-player {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
 
 .player-avatar {
   position: relative;
@@ -45,54 +40,17 @@
   border: 2px solid #1a1a1a;
 }
 
-.player-info {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.2;
-  gap: 0.15rem;
-  
-}
-
-.player-label {
-  font-size: 0.6rem;
-  color: #bbb;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-  background-color: black;
-  border-radius: 12px;
-  padding: 5px;
-}
-
-.player-cp {
-  font-size: 0.8rem;
-  font-weight: 700;
-  background-color: black;
-  border-radius: 12px;
-  padding: 2px;
-}
-
 .game-header-currency {
   display: flex;
   gap: 8px;
 }
 
-.currency-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  background: black;
-  padding: 5px 10px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.currency-item:first-child svg {
+.currency-item.is-gold svg {
   color: #ffd75e;
 }
 
-.currency-item:last-child svg {
-  color: #7ecbff;
+.currency-item.is-iron_ore svg {
+  color: #b0bec5;
 }
 
 .game-header-right {

@@ -1,15 +1,9 @@
 import { useState } from 'react'
-import { Coins, Gem, Menu, LogOut } from 'lucide-react'
+import { Menu, LogOut } from 'lucide-react'
+import { RESOURCE_ICONS } from '../lib/resourceIcons'
 import './Header.css'
 
-export default function Header({
-  avatarUrl,
-  level = 1,
-  combatPower = 0,
-  gold = 0,
-  diamonds = 0,
-  onLogout,
-}) {
+export default function Header({ avatarUrl, level = 1, resources = [], onLogout }) {
   const [menuOpen, setMenuOpen] = useState(false)
 
   function handleLogoutClick() {
@@ -19,31 +13,26 @@ export default function Header({
 
   return (
     <header className="game-header">
-      <div className="game-header-player">
-        <div className="player-avatar">
-          {avatarUrl ? (
-            <img src={avatarUrl} alt="Avatar" />
-          ) : (
-            <div className="player-avatar-placeholder" />
-          )}
-          <span className="player-level">{level}</span>
-        </div>
-        <div className="player-info">
-          <span className="player-label">Combat Power</span>
-          <span className="player-cp">{combatPower.toLocaleString()}</span>
-        </div>
+      <div className="player-avatar">
+        {avatarUrl ? (
+          <img src={avatarUrl} alt="Avatar" />
+        ) : (
+          <div className="player-avatar-placeholder" />
+        )}
+        <span className="player-level">{level}</span>
       </div>
 
       <div className="game-header-right">
         <div className="game-header-currency">
-          <div className="currency-item">
-            <Coins size={16} />
-            <span>{gold.toLocaleString()}</span>
-          </div>
-          <div className="currency-item">
-            <Gem size={16} />
-            <span>{diamonds.toLocaleString()}</span>
-          </div>
+          {resources.map(({ id, amount }) => {
+            const Icon = RESOURCE_ICONS[id]
+            return (
+              <div key={id} className={`currency-item is-${id}`}>
+                <Icon size={16} />
+                <span>{amount.toLocaleString()}</span>
+              </div>
+            )
+          })}
         </div>
 
         <div className="header-menu">

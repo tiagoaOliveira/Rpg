@@ -1,11 +1,12 @@
-import { Backpack, User, Hammer, Wrench } from 'lucide-react'
+import { Backpack, User, Hammer, Layers, Map as MapIcon } from 'lucide-react'
 import './Hub.css'
 
 const HUB_ITEMS = [
-  { key: 'inventory', label: 'Inventário', icon: Backpack },
   { key: 'character', label: 'Personagem', icon: User },
+  { key: 'map', label: 'Mapa', icon: MapIcon },
+  { key: 'inventory', label: 'Inventário', icon: Backpack },
   { key: 'forge', label: 'Forja', icon: Hammer },
-  { key: 'craft', label: 'Fabricar', icon: Wrench },
+  { key: 'fusion', label: 'Fusão', icon: Layers },
 ]
 
 export default function Hub({ active, onOpen }) {

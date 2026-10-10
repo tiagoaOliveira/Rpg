@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-import BottomSheet from './BottomSheet'
 import EquipmentModal from './EquipmentModal'
-import './Character.css'
-
+import { HEROES } from '../data/heroes'
 import { EQUIPMENT_BY_ID } from '../data/equipment'
+import './Character.css'
 
 // ESTADO DO JOGADOR (mock): quais itens ele tem e qual está equipado.
 // Isso virá do backend. A definição de cada item vem de data/equipment.js.
@@ -19,21 +18,13 @@ function toKebab(key) {
   return key.replace(/([A-Z])/g, '-$1').toLowerCase()
 }
 
-export default function Character({ isOpen, onClose, heroes = [], initialHeroId }) {
+export default function Character() {
   const [heroIndex, setHeroIndex] = useState(0)
   const [activeTab, setActiveTab] = useState('status')
   const [openSlot, setOpenSlot] = useState(null)
 
-  useEffect(() => {
-    if (!isOpen) return
-    const index = heroes.findIndex((h) => h.id === initialHeroId)
-    setHeroIndex(index >= 0 ? index : 0)
-    setActiveTab('status')
-    setOpenSlot(null)
-  }, [isOpen, initialHeroId, heroes])
-
-  const hero = heroes[heroIndex]
-  const heroState = hero ? TEST_HERO_EQUIPMENT[hero.id] ?? {} : {}
+  const hero = HEROES[heroIndex]
+  const heroState = TEST_HERO_EQUIPMENT[hero.id] ?? {}
   const heroEquipment = Object.fromEntries(
     Object.entries(heroState).map(([slot, state]) => [
       slot,
@@ -43,12 +34,13 @@ export default function Character({ isOpen, onClose, heroes = [], initialHeroId 
       },
     ])
   )
+
   function goToPrevious() {
-    setHeroIndex((current) => (current - 1 + heroes.length) % heroes.length)
+    setHeroIndex((current) => (current - 1 + HEROES.length) % HEROES.length)
   }
 
   function goToNext() {
-    setHeroIndex((current) => (current + 1) % heroes.length)
+    setHeroIndex((current) => (current + 1) % HEROES.length)
   }
 
   function handleSlotClick(slotKey) {
@@ -59,80 +51,74 @@ export default function Character({ isOpen, onClose, heroes = [], initialHeroId 
   const openSlotData = openSlot ? heroEquipment[openSlot] : null
 
   return (
-    <BottomSheet
-      isOpen={isOpen}
-      onClose={onClose}
-      headerContent={
-        <div className="character-header-selector">
-          {heroes.map((h, index) => (
-            <button
-              key={h.id}
-              className={`character-header-avatar ${index === heroIndex ? 'is-active' : ''}`}
-              onClick={() => setHeroIndex(index)}
-              aria-label={h.name}
-            >
-              {/* futuramente: <img src={h.avatarUrl} alt={h.name} /> */}
-            </button>
+    <div className="character-panel">
+      <div className="character-header-selector">
+        {HEROES.map((h, index) => (
+          <button
+            key={h.id}
+            className={`character-header-avatar ${index === heroIndex ? 'is-active' : ''}`}
+            onClick={() => setHeroIndex(index)}
+            aria-label={h.name}
+          >
+            {/* futuramente: <img src={h.avatarUrl} alt={h.name} /> */}
+          </button>
+        ))}
+      </div>
+
+      <h2 className="character-name">{hero.name}</h2>
+
+      <div className="character-card-wrapper">
+        <button
+          className="character-nav-arrow"
+          onClick={goToPrevious}
+          aria-label="Herói anterior"
+        >
+          <ChevronLeft size={22} />
+        </button>
+
+        <div className="character-card">
+          {SLOTS.map((slotKey) => (
+            <div key={slotKey} className={`equipment-slot slot-${toKebab(slotKey)}`}>
+              <button
+                className={`equipment-slot-button ${heroEquipment[slotKey] ? 'has-item' : ''}`}
+                onClick={() => handleSlotClick(slotKey)}
+                disabled={!heroEquipment[slotKey]}
+              />
+            </div>
           ))}
-        </div>
-      }
-    >
-      <div className="character-panel">
-        <div className="character-card-wrapper">
-          <button
-            className="character-nav-arrow"
-            onClick={goToPrevious}
-            aria-label="Herói anterior"
-            disabled={heroes.length < 2}
-          >
-            <ChevronLeft size={22} />
-          </button>
-
-          <div className="character-card">
-            {SLOTS.map((slotKey) => (
-              <div key={slotKey} className={`equipment-slot slot-${toKebab(slotKey)}`}>
-                <button
-                  className={`equipment-slot-button ${heroEquipment[slotKey] ? 'has-item' : ''}`}
-                  onClick={() => handleSlotClick(slotKey)}
-                  disabled={!heroEquipment[slotKey]}
-                />
-              </div>
-            ))}
-            <div className="character-image-placeholder" />
-          </div>
-
-          <button
-            className="character-nav-arrow"
-            onClick={goToNext}
-            aria-label="Próximo herói"
-            disabled={heroes.length < 2}
-          >
-            <ChevronRight size={22} />
-          </button>
+          <div className="character-image-placeholder" />
         </div>
 
-        <div className="character-tabs">
-          <button
-            className={`character-tab ${activeTab === 'status' ? 'is-active' : ''}`}
-            onClick={() => setActiveTab('status')}
-          >
-            Status
-          </button>
-          <button
-            className={`character-tab ${activeTab === 'ascension' ? 'is-active' : ''}`}
-            onClick={() => setActiveTab('ascension')}
-          >
-            Ascensão
-          </button>
-        </div>
+        <button
+          className="character-nav-arrow"
+          onClick={goToNext}
+          aria-label="Próximo herói"
+        >
+          <ChevronRight size={22} />
+        </button>
+      </div>
 
-        <div className="character-tab-content">
-          {activeTab === 'status' ? (
-            <div className="status-content" />
-          ) : (
-            <div className="ascension-content" />
-          )}
-        </div>
+      <div className="character-tabs">
+        <button
+          className={`character-tab ${activeTab === 'status' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('status')}
+        >
+          Status
+        </button>
+        <button
+          className={`character-tab ${activeTab === 'ascension' ? 'is-active' : ''}`}
+          onClick={() => setActiveTab('ascension')}
+        >
+          Ascensão
+        </button>
+      </div>
+
+      <div className="character-tab-content">
+        {activeTab === 'status' ? (
+          <div className="status-content" />
+        ) : (
+          <div className="ascension-content" />
+        )}
       </div>
 
       <EquipmentModal
@@ -141,6 +127,6 @@ export default function Character({ isOpen, onClose, heroes = [], initialHeroId 
         equippedId={openSlotData?.equippedId}
         items={openSlotData?.items ?? []}
       />
-    </BottomSheet>
+    </div>
   )
 }

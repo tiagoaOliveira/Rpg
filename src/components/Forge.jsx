@@ -1,54 +1,95 @@
 import { useState } from 'react'
-import BottomSheet from './BottomSheet'
+import { Sword, Shield, HardHat, Hand, Footprints, CircleDot } from 'lucide-react'
+import { EQUIPMENT_TYPES, EQUIPMENT_BASES_BY_TYPE } from '../data/equipment'
+import { RESOURCES } from '../data/resources'
+import { useInventory } from '../context/InventoryContext'
 import './Forge.css'
 
-// dados de teste: cada receita converte X minérios em 1 barra
-const INITIAL_RECIPES = [
-  { id: 'iron', name: 'Barra de Ferro', oreName: 'Minério de Ferro', oreCost: 5, oreOwned: 12 },
-  { id: 'copper', name: 'Barra de Cobre', oreName: 'Minério de Cobre', oreCost: 5, oreOwned: 3 },
-  { id: 'gold', name: 'Barra de Ouro', oreName: 'Minério de Ouro', oreCost: 8, oreOwned: 0 },
-]
+const TYPE_ICONS = {
+  weapon: Sword,
+  armor: Shield,
+  helmet: HardHat,
+  gloves: Hand,
+  pants: Footprints,
+  ring: CircleDot,
+}
 
-export default function Forge({ isOpen, onClose }) {
-  const [recipes, setRecipes] = useState(INITIAL_RECIPES)
+export default function Forge() {
+  const { getAmount, canAfford, forgeItem } = useInventory()
+  const [selectedType, setSelectedType] = useState(null)
+  const [message, setMessage] = useState(null)
 
-  function handleForge(recipeId) {
-    setRecipes((current) =>
-      current.map((recipe) =>
-        recipe.id === recipeId && recipe.oreOwned >= recipe.oreCost
-          ? { ...recipe, oreOwned: recipe.oreOwned - recipe.oreCost }
-          : recipe
-      )
-    )
-    // aqui depois entra a lógica real de adicionar a barra no inventário
-    console.log('Forjou:', recipeId)
+  const bases = selectedType ? EQUIPMENT_BASES_BY_TYPE[selectedType] : []
+
+  function handleSelectType(typeId) {
+    setSelectedType(typeId)
+    setMessage(null)
+  }
+
+  function handleForge(base) {
+    if (forgeItem(base.id)) {
+      setMessage(`Forjado: ${base.name} Nv 1`)
+    }
   }
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose} title="Forja">
-      <div className="forge-list">
-        {recipes.map((recipe) => {
-          const canForge = recipe.oreOwned >= recipe.oreCost
+    <div className="forge-page">
+      <div className="forge-categories">
+        {EQUIPMENT_TYPES.map((type) => {
+          const Icon = TYPE_ICONS[type.id]
           return (
-            <div key={recipe.id} className="forge-item">
-              <div className="forge-item-icon" />
-              <div className="forge-item-info">
-                <span className="forge-item-name">{recipe.name}</span>
-                <span className={`forge-item-cost ${canForge ? '' : 'is-insufficient'}`}>
-                  {recipe.oreName}: {recipe.oreOwned}/{recipe.oreCost}
-                </span>
-              </div>
-              <button
-                className="forge-item-button"
-                disabled={!canForge}
-                onClick={() => handleForge(recipe.id)}
-              >
-                Forjar
-              </button>
-            </div>
+            <button
+              key={type.id}
+              className={`forge-category ${selectedType === type.id ? 'is-active' : ''}`}
+              onClick={() => handleSelectType(type.id)}
+            >
+              <Icon size={22} />
+              {type.name}
+            </button>
           )
         })}
       </div>
-    </BottomSheet>
-  )
+
+      {!selectedType && (
+        <p className="forge-hint">Escolha uma categoria para ver o que pode ser forjado.</p>
+      )}
+
+      {selectedType && (
+        <div className="forge-list">
+          {bases.map((base) => {
+            const affordable = canAfford(base.cost)
+            return (
+              <div key={base.id} className="forge-item">
+                <div className="forge-item-icon" />
+                <div className="forge-item-info">
+                  <span className="forge-item-name">{base.name}</span>
+                  <div className="forge-item-costs">
+                    {base.cost.map(({ resourceId, amount }) => {
+                      const have = getAmount(resourceId)
+                      return (
+                        <span
+                          key={resourceId}
+                          className={`forge-item-cost ${have >= amount ? '' : 'is-insufficient'}`}
+                        >
+                          {RESOURCES[resourceId].name}: {have}/{amount}
+                        </span>
+                      )
+                    })}
+                  </div>
+                </div>
+                <button
+                  className="forge-item-button"
+                  disabled={!affordable}
+                  onClick={() => handleForge(base)}
+                >
+                  Forjar
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      )}
+
+      {message && <p className="forge-message">{message}</p>}
+    </div>)
 }
