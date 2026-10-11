@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
-import { Play, Square, Check, Coins, Star, Mountain, Pickaxe } from 'lucide-react'
+import { Play, Square, Check, Swords, Pickaxe } from 'lucide-react'
 import Modal from './Modal'
+import ResourceIcon from './ResourceIcon'
 import { MAPS } from '../data/maps'
 import { HEROES } from '../data/heroes'
 import { RESOURCES } from '../data/resources'
 import { useInventory } from '../context/InventoryContext'
-import { calcGain } from '../lib/gameMath'
-import { RESOURCE_ICONS } from '../lib/resourceIcons'
+import { calcGain, getRunEfficiency } from '../lib/gameMath'
+import { formatRate } from '../lib/format'
 import './Map.css'
 
 export default function Map() {
@@ -53,45 +54,42 @@ export default function Map() {
   }
 
   const hasSelection = selectedHeroIds.length > 0
-  // sem herói selecionado mostra o padrão do mapa (1x)
-  const multiplier = Math.max(1, selectedHeroIds.length)
+  const isMining = farmMap?.powerType === 'mining'
+  const statKey = isMining ? 'miningPower' : 'combatPower'
+  const preview = farmMap
+    ? getRunEfficiency(farmMap, selectedHeroIds)
+    : { power: 0, efficiency: 0 }
+  // sem herói escolhido mostra o máximo do mapa; com heróis, o ganho real previsto
+  const shownEfficiency = hasSelection ? preview.efficiency : 1
 
   return (
     <section className="map-list">
       {MAPS.map((map) => {
         const run = runs[map.id]
+        const efficiency = run ? getRunEfficiency(map, run.heroIds).efficiency : 0
         return (
           <div key={map.id} className="map-card">
             <div className="map-rewards">
-              {map.rewards.map(({ resourceId, amountPerHour }) => {
-                const Icon = RESOURCE_ICONS[resourceId]
-                return (
-                  <span
-                    key={resourceId}
-                    className="map-reward-item"
-                    title={RESOURCES[resourceId].name}
-                  >
-                    <Icon size={14} />
-                    {amountPerHour}/h
-                  </span>
-                )
-              })}
+              {map.rewards.map(({ resourceId, maxPerHour }) => (
+                <span
+                  key={resourceId}
+                  className="map-reward-item"
+                  title={RESOURCES[resourceId].name}
+                >
+                  <ResourceIcon id={resourceId} size={14} />
+                  {maxPerHour}/h
+                </span>
+              ))}
             </div>
 
             {run && (
               <div className="map-farm-status">
-                <span className="map-farm-multiplier">{run.heroIds.length}x</span>
-                {map.rewards.map(({ resourceId, amountPerHour }) => {
-                  const Icon = RESOURCE_ICONS[resourceId]
-                  const gain = calcGain(
-                    amountPerHour,
-                    run.heroIds.length,
-                    run.startedAt,
-                    now
-                  )
+                <span className="map-farm-multiplier">{Math.round(efficiency * 100)}%</span>
+                {map.rewards.map(({ resourceId, maxPerHour }) => {
+                  const gain = calcGain(maxPerHour, efficiency, run.startedAt, now)
                   return (
                     <span key={resourceId} className="map-farm-gain">
-                      <Icon size={12} />+{gain.toFixed(2)}
+                      <ResourceIcon id={resourceId} size={12} />+{gain.toFixed(2)}
                     </span>
                   )
                 })}
@@ -140,7 +138,15 @@ export default function Map() {
                     <span className="farm-hero-name">{hero.name}</span>
                     <span className="farm-hero-stats">
                       <span>Nv {hero.level}</span>
-                      <span className="farm-hero-mining">
+                      <span
+                        className={`farm-hero-stat ${statKey === 'combatPower' ? 'is-relevant' : ''}`}
+                      >
+                        <Swords size={11} />
+                        {hero.combatPower}
+                      </span>
+                      <span
+                        className={`farm-hero-stat ${statKey === 'miningPower' ? 'is-relevant' : ''}`}
+                      >
                         <Pickaxe size={11} />
                         {hero.miningPower}
                       </span>
@@ -160,17 +166,32 @@ export default function Map() {
           {farmMap && (
             <div className="farm-preview">
               <span className="farm-preview-label">
-                Previsão por hora
-                {multiplier > 1 && (
-                  <span className="farm-preview-multiplier">{multiplier}x</span>
+                {hasSelection ? 'Previsão por hora' : 'Máximo do mapa por hora'}
+                {hasSelection && (
+                  <span className="farm-preview-multiplier">
+                    {Math.round(preview.efficiency * 100)}%
+                  </span>
                 )}
               </span>
               <div className="farm-preview-items">
-                {farmMap.rewards.map(({ resourceId, amountPerHour }) => (
+                {farmMap.rewards.map(({ resourceId, maxPerHour }) => (
                   <span key={resourceId} className="farm-preview-item">
-                    {RESOURCES[resourceId].name}: {amountPerHour * multiplier}/h
+                    {RESOURCES[resourceId].name}: {formatRate(maxPerHour * shownEfficiency)}/h
                   </span>
                 ))}
+              </div>
+
+              <div className="farm-power">
+                <div className="farm-power-bar">
+                  <div
+                    className="farm-power-fill"
+                    style={{ width: `${preview.efficiency * 100}%` }}
+                  />
+                </div>
+                <span className="farm-power-text">
+                  {isMining ? 'Poder de mineração' : 'Poder de combate'}: {preview.power} /{' '}
+                  {farmMap.powerCap}
+                </span>
               </div>
             </div>
           )}

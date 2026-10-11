@@ -10,7 +10,7 @@
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding: 16px 4px;
-  background-color: black;
+  background-color: white;
 }
 
 .main-content > * {

@@ -203,10 +203,40 @@
   color: #777;
 }
 
-.farm-hero-mining {
+.farm-hero-stat {
   display: inline-flex;
   align-items: center;
   gap: 3px;
+}
+
+.farm-hero-stat.is-relevant {
+  color: #1a1a1a;
+  font-weight: 700;
+}
+
+.farm-power {
+  margin-top: 8px;
+}
+
+.farm-power-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(46, 125, 50, 0.15);
+  overflow: hidden;
+}
+
+.farm-power-fill {
+  height: 100%;
+  background: #2e7d32;
+  transition: width 0.2s ease;
+}
+
+.farm-power-text {
+  display: block;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #555;
 }
 
 .farm-hero-item:disabled {

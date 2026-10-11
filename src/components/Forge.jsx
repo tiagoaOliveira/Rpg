@@ -11,7 +11,7 @@ const TYPE_ICONS = {
   helmet: HardHat,
   gloves: Hand,
   pants: Footprints,
-  ring: CircleDot,
+  shield: CircleDot,
 }
 
 export default function Forge() {

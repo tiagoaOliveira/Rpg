@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { MAPS_BY_ID } from '../data/maps'
 import { EQUIPMENT_BASES_BY_ID } from '../data/equipment'
-import { calcGain, medianLevel } from '../lib/gameMath'
+import { calcGain, medianLevel, getRunEfficiency } from '../lib/gameMath'
 
 const InventoryContext = createContext(undefined)
 
@@ -88,10 +88,13 @@ export function InventoryProvider({ userId, children }) {
     const map = MAPS_BY_ID[mapId]
     const now = Date.now()
     const collected = map
-      ? map.rewards.map(({ resourceId, amountPerHour }) => ({
+      ? (() => {
+        const { efficiency } = getRunEfficiency(map, run.heroIds)
+        return map.rewards.map(({ resourceId, maxPerHour }) => ({
           resourceId,
-          amount: calcGain(amountPerHour, run.heroIds.length, run.startedAt, now),
+          amount: calcGain(maxPerHour, efficiency, run.startedAt, now),
         }))
+      })()
       : []
 
     const resources = { ...state.resources }

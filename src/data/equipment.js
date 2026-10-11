@@ -27,7 +27,7 @@ export const EQUIPMENT_TYPES = Object.freeze([
   { id: 'helmet', name: 'Elmo' },
   { id: 'gloves', name: 'Luva' },
   { id: 'pants', name: 'Calça' },
-  { id: 'ring', name: 'Anel' },
+  { id: 'shield', name: 'Escudo' },
 ])
 
 // cost = o que a forja consome pra criar uma unidade nível 1
@@ -87,9 +87,9 @@ const EQUIPMENT_BASES_LIST = [
     ],
   },
   {
-    id: 'gold_ring',
-    name: 'Anel de Ouro',
-    type: 'ring',
+    id: 'gold_shield',
+    name: 'Escudo de Ouro',
+    type: 'shield',
     cost: [
       { resourceId: 'iron_ore', amount: 2 },
       { resourceId: 'gold', amount: 150 },
